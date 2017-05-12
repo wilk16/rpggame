@@ -1,5 +1,6 @@
 from .character import Character
 from ..items.weapons.weapon import Fist, DragonClaw
+from ..items.equipment import Equipment
 
 class Monster(Character):
 	"""Base class for all foes"""
@@ -50,7 +51,7 @@ class Zombie(Undead):
 		self.exp = 100
 		self.level = 2
 		self.inventory = []
-		self.equipment = {'weapon':Fist()}
+		self.equipment = Equipment(weapon = Fist())
 
 class DragonHatchling(Dragon):
 	"""Young but still deadly dragon youngster"""
@@ -64,8 +65,8 @@ class DragonHatchling(Dragon):
 		self.exp = 2000
 		self.level = 3
 		self.inventory = []
-		self.equipment = {'weapon':DragonClaw()}
-
+		self.equipment = Equipment(weapon = DragonClaw())
+		
 class SkeletalDragon(Dragon, Undead):
 	"""Old dragon, combining dragonish and undeadish"""
 	def __init__(self):
@@ -78,7 +79,7 @@ class SkeletalDragon(Dragon, Undead):
 		self.exp = 4000
 		self.level = 4
 		self.inventory = []
-		self.equipment = {'weapon':DragonClaw()}
+		self.equipment = Equipment(weapon = DragonClaw())
 
 class Skeleton(Undead):
 	"""Lowest form of undead. Bones and arrows"""

@@ -1,4 +1,4 @@
-from ..items.weapons.weapon import Fist
+from ..items.equipment import Equipment
 from ..dies.die import Die
 
 
@@ -12,7 +12,7 @@ def printLine(txt):
 class Character:
 	
 	def __init__(self, name = 'some_name', max_hp=10, attack=0,\
-			defence=0, speed=5, exp=0, level = 1, equipment={'weapon':Fist()}):
+			defence=0, speed=5, exp=0, level = 1):
 		self.hp = max_hp
 		self.name =name
 		self.max_hp = max_hp
@@ -21,8 +21,8 @@ class Character:
 		self.speed = speed
 		self.level = level
 		self.exp = exp
-		self.inventory = inventory
-		self.equipment = equipment
+		self.inventory = []
+		self.equipment = Equipment()
 		self.dies = {'d1k20' : Die(1,20)}
 		self.attribute = []
 
@@ -55,12 +55,15 @@ class Character:
 	def show_equipemnt(self):
 		pass
 		 
-	def melee_attack(self, enemy):
+	def attack_enemy(self, enemy, special = 0):
 		attack_throw = self.dies['d1k20'].roll()
 		if attack_throw + self.attack > enemy.defence:
 			print("""{0}: Attack throw {1} - hit!""".\
 				format(self.name, attack_throw))
-			damage = max(self.equipment['weapon'].die.roll(), 0)
+			if special:
+				damage = self.equipment.weapon['special'].die.roll()
+			else:
+				damage = self.equipment.weapon['primary'].die.roll()
 			enemy.set_hp(-damage)
 			if damage > 0:
 				print("""{0}: hit {1} for {2}""".\
