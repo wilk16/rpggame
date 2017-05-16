@@ -5,5 +5,8 @@ class Item:
 		self.description = description
 		self.value = value
 
+	def __repr__(self):
+		return self.name
+
 
 

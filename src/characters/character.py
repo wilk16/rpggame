@@ -1,13 +1,7 @@
 from ..items.equipment import Equipment
 from ..dies.die import Die
-
-
-ROW_LEN = 40
-
-
-def printLine(txt):
-	#helper funciton for printing pretty lines
-	return ('-- '+txt + (ROW_LEN-len(txt)-5)*' ' + '--\n')
+from ..misc.misc import printLine
+from ..misc.const import ROW_LEN
 
 class Character:
 	
@@ -28,14 +22,13 @@ class Character:
 
 	def isAlive(self):
 		if self.hp <= 0:
-			print(self.name + " is down!")
+			#print(self.name + " is down!")
 			return 0
 		else:
 			return 1
 
 	def set_hp(self, val):
 		self.hp = max(min(self.hp + val, self.max_hp), 0)
-
 
 	def show_stats(self):
 		msg = ''
@@ -50,24 +43,43 @@ class Character:
 		msg += printLine('Speed: ' + str(self.speed))
 		msg += ROW_LEN*'-'+'\n'
 		print(msg)
-		
-		
-	def show_equipemnt(self):
-		pass
+
+	def show_equipment(self):
+		msg = ''
+		msg += ROW_LEN*'-'+'\n'
+		msg += printLine(str(self.name).upper() + ' EQUIPMENT: ')
+		msg += ROW_LEN*'*'+'\n'
+		msg += printLine('Weapon: ' + str(self.equipment.weapon))
+		msg += ROW_LEN*'-'+'\n'
+		print(msg)
 		 
-	def attack_enemy(self, enemy, special = 0):
+	def view_battle_stats(self, enemy):
+		msg = ''
+		msg += ROW_LEN*'-'+'\n'
+		msg += printLine((str(enemy.name).upper() + '(' + str(enemy.level) + ')').ljust(ROW_LEN-6, ' '))
+		msg += printLine(('HP: ' + str(enemy.hp) + '/' + str(enemy.max_hp)).ljust(ROW_LEN-6, ' '))
+		msg += ROW_LEN*'-'+'\n'
+		msg += printLine('VS'.center(ROW_LEN-6, ' '))
+		msg += ROW_LEN*'-'+'\n'
+		msg += printLine((str(self.name).upper() + '(' + str(self.level) + ')').rjust(ROW_LEN-6, ' '))
+		msg += printLine(('HP: ' + str(self.hp) + '/' + str(self.max_hp)).rjust(ROW_LEN-6, ' '))
+		msg += ROW_LEN*'-'+'\n'
+		print(msg)
+		 
+		 
+	def attack_enemy(self, enemy):
+		msg = ''
 		attack_throw = self.dies['d1k20'].roll()
 		if attack_throw + self.attack > enemy.defence:
-			print("""{0}: Attack throw {1} - hit!""".\
+			msg+=("""{0}: Attack throw {1} - hit!\n""".\
 				format(self.name, attack_throw))
-			if special:
-				damage = self.equipment.weapon['special'].die.roll()
-			else:
-				damage = self.equipment.weapon['primary'].die.roll()
+			damage = self.equipment.weapon.die.roll()
+
 			enemy.set_hp(-damage)
 			if damage > 0:
-				print("""{0}: hit {1} for {2}""".\
+				msg+=("""{0}: hit {1} for {2}""".\
 					format(self.name, enemy.name, damage))
 		else:
-			print("""{0}: Attack throw {1} - miss!""".\
+			msg+=("""{0}: Attack throw {1} - miss!""".\
 				format(self.name, attack_throw))
+		return(msg)

@@ -1,11 +1,16 @@
-from ..item import Item
-from ...dies.die import Die
+"""Implements weapon class and all objects connected with weapons and dealing damage"""
+
+from .item import Item
+from ..dies.die import Die
 
 class Weapon(Item):
 	"""Base class for all weapons"""
 	def __init__(self):
 		super().__init__()
-		self.item_type = 'weapon'
+		self.die = Die(1,1)
+		
+	def __repr__(self):
+		return self.name + ' (' + repr(self.die) + ')'
 
 class BluntWeapon(Weapon):
 	"""Base class for blunt weapons"""

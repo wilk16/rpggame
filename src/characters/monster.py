@@ -1,5 +1,5 @@
 from .character import Character
-from ..items.weapons.weapon import Fist, DragonClaw
+from ..items.weapon import Fist, DragonClaw
 from ..items.equipment import Equipment
 
 class Monster(Character):
@@ -59,6 +59,7 @@ class DragonHatchling(Dragon):
 		super().__init__()
 		self.name = 'Dragon hatchling'
 		self.max_hp = 30
+		self.hp = 30
 		self.attack = 7
 		self.defence = 8
 		self.speed = 7
@@ -73,6 +74,7 @@ class SkeletalDragon(Dragon, Undead):
 		super().__init__()
 		self.name = 'Skeletal dragon'
 		self.max_hp = 50
+		self.hp = 50
 		self.attack = 7
 		self.defence = 5
 		self.speed = 6

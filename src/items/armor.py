@@ -1,5 +1,5 @@
-from ..item import Item
-from ...dies.die import Die
+from .item import Item
+from ..dies.die import Die
 
 		
 class Armor(Item):

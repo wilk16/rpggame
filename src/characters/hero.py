@@ -1,56 +1,96 @@
 from .character import Character
 from .level_mat import lvl
-from ..items.weapons.weapon import ShortSword
+from ..items.weapon import ShortSword
 from ..items.equipment import Equipment
+from ..items.elixir import HealingPotion
 from ..dies.die import Die
+from .monster import Undead
+from ..misc.misc import EventLog, clear_display
 
 class Hero(Character):
 	"""Base class for players profession"""
 	def __init__(self):
 		super().__init__()
 		self.race = 'Human'
+		self.equipment = Equipment(elixir = [HealingPotion(2)], weapon = ShortSword())
+		self.actions = {'a':self.attack_enemy,
+						's':self.do_nothing, 
+						'b':self.do_nothing}
+						
+	def do_nothing(self, enemy):
+		print("This function should not be called!")
 		
 	def levelUp(self):
 		"""Raise hero's level"""
 		self.level += 1
 		self.max_hp += 15
-		print("Level Up!")
+		return("Level Up!")
 
 	def setExp(self, val):
 		"""Add/remove hero's exp"""
+		msg = ''
 		self.exp += val
-		print(self.name +' gained ' + str(val) + ' exp.')
+		msg+=(self.name +' gained ' + str(val) + ' exp.\n')
 		if lvl[self.level] <=  self.exp:
-			self.levelUp()
+			msg+=self.levelUp()
+		return msg.strip()
+
 			
 	def battle(self, enemy):
 		"""implements fighting against an enemy"""
 		
-		print('You enter a battle with {}'.format(enemy.name))
+		msg_log = EventLog()
+		msg_log.insert('You enter a battle with {}'.format(enemy.name))
+		
 		while 1==1:
-			action = input('Press a for attack and s for special move\n')
-			if action not in ('a', 's', 'b'):
+			
+			clear_display()
+			msg_log.display_log()
+				
+			self.view_battle_stats(enemy)
+			action = input("""\nPress a for attack and s for special move,
+b for boost and e to use an elixir:\n""")
+			if action not in ('a', 's', 'b', 'e'):
 				continue
+			elif action == 'e':
+				print()
+				for i in range(1, len(self.equipment.elixir)+1):
+					print(str(i)+') ' + self.equipment.elixir[i-1].name + ' [' + str(self.equipment.elixir[i-1].amount) + ']')
+				elixir_action = input('Type number of elixir to drink:\n')
 			if self.speed >= enemy.speed:
-				self.actions[action](enemy)
-				if not enemy.isAlive():
-					print(self.name + ' killed ' + enemy.name)
-					self.setExp(enemy.exp)
-					break
-				enemy.attack_enemy(self)
+				if action == 'e':
+					msg_log.insert(self.equipment.elixir[int(elixir_action)-1].drink(self))
+				else:
+					msg_log.insert(self.actions[action](enemy))
+					if not enemy.isAlive():
+						msg_log.insert(self.name + ' killed ' + enemy.name)
+						msg_log.insert(self.setExp(enemy.exp))
+						clear_display()
+						msg_log.display_log()
+						break
+				msg_log.insert(enemy.attack_enemy(self))
 				if not self.isAlive():
 					print(enemy.name + ' killed ' + self.name)
+					clear_display()
+					msg_log.display_log()
 					break
 			else:
-				enemy.attack_enemy(self)
+				msg_log.insert(enemy.attack_enemy(self))
 				if not self.isAlive():
-					print(enemy.name + ' killed ' + self.name)
+					msg_log.insert(enemy.name + ' killed ' + self.name)
+					clear_display()
+					msg_log.display_log()
 					break
-				self.actions[action](enemy)
-				if not enemy.isAlive():
-					print(self.name + ' killed ' + enemy.name)
-					self.setExp(enemy.exp)
-					break
+				if action == 'e':
+					msg_log.insert(self.equipment.elixir[elixir_action].drink(self))
+				else:
+					msg_log.insert(self.actions[action](enemy))
+					if not enemy.isAlive():
+						msg_log.insert(self.name + ' killed ' + enemy.name)
+						msg_log.insert(self.setExp(enemy.exp))
+						clear_display()
+						msg_log.display_log()
+						break
 				
 
 class Fighter(Hero):
@@ -60,29 +100,27 @@ class Fighter(Hero):
 		self.name = name
 		self.profession = 'Fighter'
 		self.attack = 3
-		self.defence = 2
-		self.equipment = Equipment(weapon = ShortSword())
-		self.actions = {'a':self.attack_enemy,
-						's':self.charge, 
-						'b':self.bulk_up}
+		self.defence = 12
+		self.actions['s'] = self.charge 
+		self.actions['b'] = self.bulk_up
 			
 	def bulk_up(self, enemy):
 		"""Raise fighters attack"""
 		self.attack+=1
-		print(self.name + "'s attack rose +1")
+		return(self.name + "'s attack rose +1")
 		
 	def charge(self, enemy):
 		"""Attack with 3x rolls"""
-		
+		msg = ''
 		#boost weapon's die
-		primary_die = self.equipment.weapon['primary'].die
-		self.equipment.weapon['special'].die = Die(primary_die.amount*3, primary_die.sides)
+		primary_die = self.equipment.weapon.die
+		self.equipment.weapon.die = Die(primary_die.amount*3, primary_die.sides)
 		#attack
-		print(self.name + ' charged!')
-		self.attack_enemy(enemy, 1)
+		msg+=(self.name + ' charged!\n')
+		msg+=self.attack_enemy(enemy)
 		#restore state
-		self.equipment.weapon['special'].die = Die(primary_die.amount, primary_die.sides)
-
+		self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides)
+		return(msg)
 
 class Paladin(Hero):
 	"""Paladin class, special powers for fighting with undead"""
@@ -91,17 +129,30 @@ class Paladin(Hero):
 		self.name = name
 		self.profession = 'Paladin'
 		self.attack = 2
-		self.defence = 3
-		self.equipment = Equipment(weapon = ShortSword())
-		self.actions = {'a':self.attack_enemy,
-						's':self.holy_strike, 
-						'b':self.block}
+		self.defence = 13
+		self.actions['s'] = self.holy_strike 
+		self.actions['b'] = self.block
 			
-	def block(self):
+	def block(self, enemy):
 		"""Raise paladins defence"""
 		self.defence+=1
 		print(self.name + "''s attack rose +1")
 	
-	def holy_strike(self):
-		"""Attack with divine help"""
-		print(self.name + ' used holy strike!')
+	def holy_strike(self, enemy):
+		"""Attack with divine help by adding +4 to attack die. If the enemy is undead
+		add secod throw."""
+		msg = ''
+		#boost weapon's die
+		primary_die = self.equipment.weapon.die
+		if isinstance(enemy, Undead):
+			self.equipment.weapon.die = Die(primary_die.amount*2, primary_die.sides+4)
+		else:
+			self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides+4)
+		msg+=(self.name + ' used holy strike!\n')
+		
+		#attack
+		msg+=self.attack_enemy(enemy)
+		
+		#restore state
+		self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides)
+		return(msg)
