@@ -5,7 +5,6 @@ from .items.weapon import *
 from .dies.die import Die
 from .misc.misc import EventLog
 
-
 f = Fighter()
 p = Paladin()
 z = Zombie()

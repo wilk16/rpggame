@@ -45,7 +45,7 @@ class Hero(Character):
 		while 1==1:
 			
 			clear_display()
-			msg_log.display_log()
+			print(msg_log.display_log())
 				
 			self.view_battle_stats(enemy)
 			action = input("""\nPress a for attack and s for special move,
@@ -65,21 +65,28 @@ b for boost and e to use an elixir:\n""")
 					if not enemy.isAlive():
 						msg_log.insert(self.name + ' killed ' + enemy.name)
 						msg_log.insert(self.setExp(enemy.exp))
+						msg_log.insert('Press any key...')
 						clear_display()
-						msg_log.display_log()
+						print(msg_log.display_log())
+						self.view_battle_stats(enemy)
+						_=input('')
 						break
 				msg_log.insert(enemy.attack_enemy(self))
 				if not self.isAlive():
 					print(enemy.name + ' killed ' + self.name)
 					clear_display()
-					msg_log.display_log()
+					print(msg_log.display_log())
+					self.view_battle_stats(enemy)
+					_=input('')
 					break
 			else:
 				msg_log.insert(enemy.attack_enemy(self))
 				if not self.isAlive():
 					msg_log.insert(enemy.name + ' killed ' + self.name)
 					clear_display()
-					msg_log.display_log()
+					print(msg_log.display_log())
+					self.view_battle_stats(enemy)
+					_=input('')
 					break
 				if action == 'e':
 					msg_log.insert(self.equipment.elixir[elixir_action].drink(self))
@@ -89,7 +96,9 @@ b for boost and e to use an elixir:\n""")
 						msg_log.insert(self.name + ' killed ' + enemy.name)
 						msg_log.insert(self.setExp(enemy.exp))
 						clear_display()
-						msg_log.display_log()
+						print(msg_log.display_log())
+						self.view_battle_stats(enemy)
+						_=input('')
 						break
 				
 

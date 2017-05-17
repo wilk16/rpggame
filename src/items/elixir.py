@@ -11,6 +11,7 @@ class Elixir(Item):
 		return self.name + ' (' + repr(self.amount) + ')'
 		
 	def drink(self, hero):
+		"""Consumes elixir and heals 10 hp"""
 		if self.amount > 0:
 			self.amount -=1
 			return(hero.name + ' drinks elixir, but nothing happens...')
@@ -27,8 +28,11 @@ class HealingPotion(Elixir):
 		self.amount = amount
 	
 	def drink(self, hero):
+		"""Consumes elixir and heals 10 hp"""
 		if hero.hp == hero.max_hp:
 			return(hero.name + ' has full HP!')
+		elif hero.hp <= 0:
+			return(hero.name + ' cannot be resurrected with this item')
 		elif self.amount > 0:
 			curr_hp = hero.hp
 			hero.set_hp(self.healing)
@@ -38,8 +42,7 @@ class HealingPotion(Elixir):
 		else:
 			return(hero.name + ' has no '+self.name+"s left")
 	
-	
-	
+
 class SpeedElixir(Elixir):
 	"""Potion that temporarily boosts speed"""
 	pass
