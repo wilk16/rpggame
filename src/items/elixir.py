@@ -11,7 +11,7 @@ class Elixir(Item):
 		return self.name + ' (' + repr(self.amount) + ')'
 		
 	def drink(self, hero):
-		"""Consumes elixir and heals 10 hp"""
+		"""Consumes elixir"""
 		if self.amount > 0:
 			self.amount -=1
 			return(hero.name + ' drinks elixir, but nothing happens...')
@@ -42,6 +42,27 @@ class HealingPotion(Elixir):
 		else:
 			return(hero.name + ' has no '+self.name+"s left")
 	
+class ManaPotion(Elixir):
+	"""Elixir that restores 3 mana"""
+	def __init__(self, amount=1):
+		self.name = 'Mana potion'
+		self.description = 'After drinking this, you feel like doing special things'
+		self.value = 5
+		self.mana_restore = 3
+		self.amount = amount
+	
+	def drink(self, hero):
+		"""Consumes elixir and restores 3 mana"""
+		if hero.mana == hero.max_mana:
+			return(hero.name + ' has full mana!')
+		elif self.amount > 0:
+			curr_mana = hero.mana
+			hero.set_mana(self.mana_restore)
+			restored_mana = hero.mana
+			self.amount -=1
+			return(hero.name + ': ' + str(restored_mana - curr_mana) + ' mana points restored.')
+		else:
+			return(hero.name + ' has no '+self.name+"s left")
 
 class SpeedElixir(Elixir):
 	"""Potion that temporarily boosts speed"""

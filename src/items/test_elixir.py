@@ -1,5 +1,5 @@
 import unittest
-from .elixir import Elixir, HealingPotion
+from .elixir import Elixir, HealingPotion, ManaPotion
 from ..characters.hero import Hero
 
 class TestElixirClass(unittest.TestCase):
@@ -80,6 +80,11 @@ class TestHealingPotionClass(unittest.TestCase):
 		msg = self.e0.drink(self.h)
 		self.assertEqual(msg, self.h.name + ' has no '+self.e0.name+"s left")
 		self.assertEqual(self.e0.amount, 0)
+		
+		
+class TestManaPotionClass(unittest.TestCase):
+	"""Tests for ManaPotion class"""
+	pass
 		
 if __name__ == '__main__':
     unittest.main()

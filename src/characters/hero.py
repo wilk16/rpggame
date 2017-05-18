@@ -2,7 +2,7 @@ from .character import Character
 from .level_mat import lvl
 from ..items.weapon import ShortSword
 from ..items.equipment import Equipment
-from ..items.elixir import HealingPotion
+from ..items.elixir import HealingPotion, ManaPotion
 from ..dies.die import Die
 from .monster import Undead
 from ..misc.misc import EventLog, clear_display
@@ -11,15 +11,10 @@ class Hero(Character):
 	"""Base class for players profession"""
 	def __init__(self):
 		super().__init__()
-		self.race = 'Human'
-		self.equipment = Equipment(elixir = [HealingPotion(2)], weapon = ShortSword())
-		self.actions = {'a':self.attack_enemy,
-						's':self.do_nothing, 
-						'b':self.do_nothing}
-						
-	def do_nothing(self, enemy):
-		print("This function should not be called!")
-		
+		self.attribute.append('Human')
+		self.equipment = Equipment(elixir = [HealingPotion(2), ManaPotion(3)], weapon = ShortSword())
+		self.actions = {'a':self.attack_enemy}
+
 	def levelUp(self):
 		"""Raise hero's level"""
 		self.level += 1
@@ -121,14 +116,22 @@ class Fighter(Hero):
 	def charge(self, enemy):
 		"""Attack with 3x rolls"""
 		msg = ''
-		#boost weapon's die
-		primary_die = self.equipment.weapon.die
-		self.equipment.weapon.die = Die(primary_die.amount*3, primary_die.sides)
-		#attack
-		msg+=(self.name + ' charged!\n')
-		msg+=self.attack_enemy(enemy)
-		#restore state
-		self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides)
+		#check if hero has enough mana
+		if self.mana <=0:
+			msg += self.name + ": out of mana. Use normal attack\n"
+			#attack
+			msg+=self.attack_enemy(enemy)
+		else:
+			#boost weapon's die
+			primary_die = self.equipment.weapon.die
+			self.equipment.weapon.die = Die(primary_die.amount*3, primary_die.sides)
+			#attack
+			msg+=(self.name + ' charged!\n')
+			msg+=self.attack_enemy(enemy)
+			#reduce mana
+			self.set_mana(-1)
+			#restore state
+			self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides)
 		return(msg)
 
 class Paladin(Hero):
@@ -151,17 +154,26 @@ class Paladin(Hero):
 		"""Attack with divine help by adding +4 to attack die. If the enemy is undead
 		add secod throw."""
 		msg = ''
-		#boost weapon's die
-		primary_die = self.equipment.weapon.die
-		if isinstance(enemy, Undead):
-			self.equipment.weapon.die = Die(primary_die.amount*2, primary_die.sides+4)
+		#check if hero has enough mana
+		if self.mana <=0:
+			msg += self.name + ": out of mana. Use normal attack\n"
+			#attack
+			msg+=self.attack_enemy(enemy)
 		else:
-			self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides+4)
-		msg+=(self.name + ' used holy strike!\n')
-		
-		#attack
-		msg+=self.attack_enemy(enemy)
-		
-		#restore state
-		self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides)
+			#boost weapon's die
+			primary_die = self.equipment.weapon.die
+			if isinstance(enemy, Undead):
+				self.equipment.weapon.die = Die(primary_die.amount*2, primary_die.sides+4)
+			else:
+				self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides+4)
+			msg+=(self.name + ' used holy strike!\n')
+			
+			#attack
+			msg+=self.attack_enemy(enemy)
+			
+			#reduce mana
+			self.set_mana(-1)
+			
+			#restore weapon's state
+			self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides)
 		return(msg)
