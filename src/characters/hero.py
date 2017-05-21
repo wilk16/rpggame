@@ -5,7 +5,7 @@ from ..items.equipment import Equipment
 from ..items.elixir import HealingPotion, ManaPotion
 from ..dies.die import Die
 from .monster import Undead
-from ..misc.misc import EventLog, clear_display
+from ..misc.misc import msg_log, clear_display
 
 class Hero(Character):
 	"""Base class for players profession"""
@@ -14,6 +14,7 @@ class Hero(Character):
 		self.attribute.append('Human')
 		self.equipment = Equipment(elixir = [HealingPotion(2), ManaPotion(3)], weapon = ShortSword())
 		self.actions = {'a':self.attack_enemy}
+		self.xy = [None, None]
 
 	def levelUp(self):
 		"""Raise hero's level"""
@@ -34,7 +35,7 @@ class Hero(Character):
 	def battle(self, enemy):
 		"""implements fighting against an enemy"""
 		
-		msg_log = EventLog()
+		#msg_log = EventLog()
 		msg_log.insert('You enter a battle with {}'.format(enemy.name))
 		
 		while 1==1:

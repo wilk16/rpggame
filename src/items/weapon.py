@@ -27,7 +27,7 @@ class DragonClaw(SlashWeapon):
 	"""Dragon's main weapon"""
 	def __init__(self):
 		super().__init__()
-		self.die = Die(2,8)
+		self.die = Die(2,4)
 		self.value = 0
 		self.name = 'Dragon claws'
 		self.description = 'Deadly sharp and feared magical claws'
