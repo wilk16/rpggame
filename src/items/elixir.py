@@ -45,7 +45,7 @@ class HealingPotion(Elixir):
 class ManaPotion(Elixir):
 	"""Elixir that restores 3 mana"""
 	def __init__(self, amount=1):
-		self.name = 'Mana potion'
+		self.name = 'Mana potion' 
 		self.description = 'After drinking this, you feel like doing special things'
 		self.value = 5
 		self.mana_restore = 3
