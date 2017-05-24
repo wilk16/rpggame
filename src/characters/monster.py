@@ -94,7 +94,7 @@ class Skeleton(Undead):
 		self.max_hp = 5
 		self.hp = 5
 		self.attack = 3
-		self.defence = 2
+		self.defence = 2 # attack + 1k20 >= defence
 		self.speed = 3
 		self.exp = 300
 		self.level = 1
