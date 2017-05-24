@@ -12,7 +12,3 @@ class Equipment():
 		self.shield = WoodenShield
 		self.armor = LeatherArmor
 		self.elixir = elixir
-
-
-
-

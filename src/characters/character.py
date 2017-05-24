@@ -5,7 +5,7 @@ from ..misc.const import ROW_LEN
 
 class Character:
 	
-	def __init__(self, name = 'some_name', max_hp=10, attack=0,\
+	def __init__(self, name = 'some_name', max_hp=15, attack=0,\
 			defence=0, speed=5, exp=0, level = 1, max_mana = 5):
 		self.hp = max_hp
 		self.name =name

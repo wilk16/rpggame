@@ -1,6 +1,8 @@
 from .character import Character
-from ..items.weapon import Fist, DragonClaw
+from ..items.weapon import Fist, DragonClaw, ShortSword
 from ..items.equipment import Equipment
+
+
 
 class Monster(Character):
 	"""Base class for all foes"""
@@ -33,7 +35,18 @@ class Undead(Monster):
 		
 class Vampire(Undead):
 	"""Dracula, Regis, Edward and other shiny fellows"""
-	pass
+	def __init__(self):
+		super().__init__()
+		self.name = 'Vampire'
+		self.max_hp = 20
+		self.hp = 20
+		self.attack = 9
+		self.defence = 9
+		self.speed = 5
+		self.exp = 2500
+		self.level = 3
+		self.inventory = []
+		self.equipment = Equipment(weapon = VampireFangs())
 	
 class Ghul(Undead):
 	"""Quasimodo, but dead. Undead"""
@@ -45,10 +58,11 @@ class Zombie(Undead):
 		super().__init__()
 		self.name = 'Zombie'
 		self.max_hp = 10
+		self.hp = 10
 		self.attack = 1
 		self.defence = 3
 		self.speed = 1
-		self.exp = 100
+		self.exp = 300
 		self.level = 2
 		self.inventory = []
 		self.equipment = Equipment(weapon = Fist())
@@ -73,17 +87,33 @@ class SkeletalDragon(Dragon, Undead):
 	def __init__(self):
 		super().__init__()
 		self.name = 'Skeletal dragon'
-		self.max_hp = 50
-		self.hp = 50
+		self.max_hp = 20
+		self.hp = 20
 		self.attack = 7
 		self.defence = 5
 		self.speed = 6
 		self.exp = 4000
-		self.level = 4
+		self.level = 5
 		self.inventory = []
 		self.equipment = Equipment(weapon = DragonClaw())
 
 class Skeleton(Undead):
 	"""Lowest form of undead. Bones and arrows"""
-	pass
+	def __init__(self):
+		super().__init__()
+		self.name = 'Skeleton'
+		self.max_hp = 5
+		self.hp = 5
+		self.attack = 3
+		self.defence = 2 # attack + 1k20 >= defence
+		self.speed = 3
+		self.exp = 100
+		self.level = 1
+		self.inventory = []
+		self.equipment = Equipment(weapon = ShortSword())
 	
+MONSTER_COLLECTION = {1: [Skeleton,],
+	2:[Zombie,],
+	3:[DragonHatchling,],
+	4:[],
+	5:[SkeletalDragon,]}

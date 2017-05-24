@@ -47,3 +47,4 @@ class EventLog():
 		else:
 			self.message.append(msg)
 			self.length += 1
+msg_log = EventLog()
