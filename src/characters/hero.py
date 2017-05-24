@@ -20,6 +20,9 @@ class Hero(Character):
 		"""Raise hero's level"""
 		self.level += 1
 		self.max_hp += 15
+		self.hp += 15
+		self.max_mana += 1
+		self.mana += 1
 		return("Level Up!")
 
 	def setExp(self, val):

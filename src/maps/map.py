@@ -1,27 +1,46 @@
 from itertools import product
 from ..characters.monster import MONSTER_COLLECTION
-from random import choice
+from random import choice, randint
 from ..characters.hero import Hero
 from ..misc.const import DIRECTIONS, MAP_TILE_X, MAP_TILE_Y
 from ..misc.misc import clear_display, msg_log
 
 class Level:
 	
-	def __init__(self, dim = 5, depth = 1):
-		self.dim = dim
+	def __init__(self, depth = 1):
+		self.dim = 5
 		self.depth = depth
-		self.boss = None
 		self.artifact = None
 		self.hero = None
+		self.tiles = [[Tile() for j in range(0, self.dim)] for i in range(0, self.dim)]
+		self.boss_beaten = False
 
-		
 	def generate_random_level(self):
-		#will be random in the future
+		
+		tile_dict = {'monster': (MonsterTile, 5),
+					'healing': (HealthTile, 2),
+					'boss': (BossTile, 1),
+					'mana': (ManaTile, 1),}
+					
+		self.tiles[2][2] = SpawnTile()
+		
+		empty_tiles = [(x, y) for x in range(0, self.dim) for y in range(0, self.dim) if (x, y)!=(2, 2)]
+		
+		
+		for key in tile_dict:
+			for i in range(0, tile_dict[key][1]):
+				x, y = choice(empty_tiles)
+				del empty_tiles[empty_tiles.index((x,y))]
+				self.tiles[x][y] = tile_dict[key][0](level = self.depth)
+
+
+	def generate_sample_level(self):
+		# generate the same level for testing purposes
 		self.tiles = [[MonsterTile(level = self.depth), Tile(), Tile(),Tile(), Tile()],
 					[Tile(),Tile(), Tile(), Tile(),Tile()],
 					[Tile(), MonsterTile(level = self.depth), SpawnTile(), HealthTile(), Tile()],
 					[Tile(), Tile(), Tile(),MonsterTile(level = self.depth),Tile()],
-					[Tile(), Tile(), Tile(),Tile(), Tile()]]
+					[Tile(), BossTile(), Tile(),Tile(), Tile()]]
 					
 	def show_level(self):
 		# prepare map for display
@@ -43,26 +62,24 @@ class Level:
 		# perform action connected to tile
 		if self.tiles[x][y].visited == 0:
 			self.tiles[x][y].action(hero = self.hero, enemy = self.tiles[x][y].enemy)
+		if isinstance(self.tiles[x][y], BossTile) & self.hero.isAlive():
+			_=clear_display()
+			print(msg_log.display_log())
+			self.boss_beaten = True
+		
 			
 		# explore new and surrounding tiles
 		self.tiles[x][y].visited = 1
 		
-		try: 
+		if (x-1 >= 0) & (x-1 < self.dim):
 			self.tiles[x-1][y].visible = 1
-		except IndexError:
-			pass
-		try: 
+		if (x+1 >= 0) & (x+1 < self.dim):
 			self.tiles[x+1][y].visible = 1
-		except IndexError:
-			pass
-		try: 
+		if (y+1 >= 0) & (y+1 < self.dim):
 			self.tiles[x][y+1].visible = 1
-		except IndexError:
-			pass
-		try: 
+		if (y-1 >= 0) & (y-1 < self.dim):
 			self.tiles[x][y-1].visible = 1
-		except IndexError:
-			pass
+
 		
 		
 	def enter_hero(self, hero):
@@ -74,7 +91,7 @@ class Level:
 		
 	def move_hero(self, hero):
 		
-		while 1 == 1:
+		while self.boss_beaten == False:
 			_=clear_display()
 			print(msg_log.display_log())
 			self.show_level()
@@ -93,7 +110,7 @@ class Level:
 					self.tiles[self.hero.xy[0]][self.hero.xy[1]].symbol = 'H'
 					self.visit_tile(self.hero.xy[0], self.hero.xy[1])
 			else:
-				_=input('bad decision')
+				_=input('bad decision\n')
 		
 		
 class Tile:
@@ -147,7 +164,17 @@ class MonsterTile(Tile):
 		Hero.battle(kwargs['hero'], kwargs['enemy'])
 		
 class BossTile(MonsterTile):
-	pass
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		self.enemy = choice(MONSTER_COLLECTION[kwargs['level']+2])()
+		self.symbol = 'B'
+		self.action = BossTile.battle
+		
+	def battle(**kwargs):
+		msg_log.insert('You encounter a '+kwargs['enemy'].name)
+		Hero.battle(kwargs['hero'], kwargs['enemy'])
+		if kwargs['hero'].isAlive():
+			msg_log.insert("You've beaten the boss of this level.\nBehind him you see another stairs leading down...")
 	
 class RestorationTile(Tile):
 	def __init__(self, **kwargs):
@@ -155,11 +182,18 @@ class RestorationTile(Tile):
 	
 	
 class ManaTile(RestorationTile):
-	pass
+	def __init__(self, **kwargs):
+		super().__init__()
+		self.symbol = 'm'
+		self.action = ManaTile.restore_mana
+		
+	def restore_mana(**kwargs):
+		msg_log.insert(kwargs['hero'].name +"'s full mana was restored.")
+		kwargs['hero'].mana = kwargs['hero'].max_mana
 	
 class HealthTile(RestorationTile):
 	
-	def __init__(self):
+	def __init__(self, **kwargs):
 		super().__init__()
 		self.symbol = '+'
 		self.action = HealthTile.restore_health

@@ -12,8 +12,20 @@ z = Zombie()
 d = DragonHatchling()
 s = SkeletalDragon()
 
-l = Level()
-l.generate_random_level()
-l.enter_hero(f)
-l.move_hero(f)
+h = f
+
+depth = 1
+while 1==1:
+	h.hp = h.max_hp
+	h.mana = h.max_mana
+	l = Level(depth = depth)
+	l.generate_random_level()
+	l.enter_hero(f)
+	l.move_hero(f)
+	del l
+	if f.isAlive():
+		depth += 1
+	else:
+		print('Game over sucker')
+		break
 
