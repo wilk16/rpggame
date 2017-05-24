@@ -35,7 +35,18 @@ class Undead(Monster):
 		
 class Vampire(Undead):
 	"""Dracula, Regis, Edward and other shiny fellows"""
-	pass
+	def __init__(self):
+		super().__init__()
+		self.name = 'Vampire'
+		self.max_hp = 20
+		self.hp = 20
+		self.attack = 9
+		self.defence = 9
+		self.speed = 5
+		self.exp = 2500
+		self.level = 3
+		self.inventory = []
+		self.equipment = Equipment(weapon = VampireFangs())
 	
 class Ghul(Undead):
 	"""Quasimodo, but dead. Undead"""
