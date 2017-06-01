@@ -12,7 +12,6 @@ class TestCharacterClass(unittest.TestCase):
 		"""Test initial values"""
 		self.assertEqual(self.c.hp, self.c.max_hp)
 		self.assertEqual(self.c.name, 'Character_1')
-		# ...
 		
 	def test_isAlive_method_when_dead(self):
 		"""Should return 0"""

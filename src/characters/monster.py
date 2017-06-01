@@ -1,5 +1,5 @@
 from .character import Character
-from ..items.weapon import Fist, DragonClaw, ShortSword
+from ..items.weapon import *
 from ..items.equipment import Equipment
 
 

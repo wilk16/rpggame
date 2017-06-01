@@ -11,6 +11,15 @@ class Weapon(Item):
 		
 	def __repr__(self):
 		return self.name + ' (' + repr(self.die) + ')'
+		
+	def modify_weapon_die(self, **kwargs):
+		#boost weapon's die
+		self.die = Die(kwargs['amount_op'](self.die.amount, kwargs['amount_val']),
+						kwargs['side_op'](self.die.sides, kwargs['side_val']))
+		
+	def restore_weapon_die(self, **kwargs):
+		self.die = kwargs['die']
+		
 
 class BluntWeapon(Weapon):
 	"""Base class for blunt weapons"""

@@ -6,6 +6,7 @@ from ..items.elixir import HealingPotion, ManaPotion
 from ..dies.die import Die
 from .monster import Undead
 from ..misc.misc import msg_log, clear_display
+from ..misc.const import ADD, MUL
 
 class Hero(Character):
 	"""Base class for players profession"""
@@ -15,6 +16,7 @@ class Hero(Character):
 		self.equipment = Equipment(elixir = [HealingPotion(2), ManaPotion(3)], weapon = ShortSword())
 		self.actions = {'a':self.attack_enemy}
 		self.xy = [None, None]
+		self.max_depth_reached = 1
 
 	def levelUp(self):
 		"""Raise hero's level"""
@@ -126,16 +128,22 @@ class Fighter(Hero):
 			#attack
 			msg+=self.attack_enemy(enemy)
 		else:
-			#boost weapon's die
 			primary_die = self.equipment.weapon.die
-			self.equipment.weapon.die = Die(primary_die.amount*3, primary_die.sides)
+			
+			#boost weapon's die
+			change_weapon = {'side_op': ADD, 'side_val': 0, 'amount_op': MUL, 'amount_val': 3}
+			self.equipment.weapon.modify_weapon_die(**change_weapon)
+			
 			#attack
 			msg+=(self.name + ' charged!\n')
 			msg+=self.attack_enemy(enemy)
+			
 			#reduce mana
 			self.set_mana(-1)
+			
 			#restore state
-			self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides)
+			self.equipment.weapon.restore_weapon_die(die = primary_die)
+			
 		return(msg)
 
 class Paladin(Hero):

@@ -16,3 +16,5 @@ class Die():
 	def __repr__(self):
 		return str(self.amount)+'k'+str(self.sides)
 		
+	def __eq__(self, obj):
+		return True if (self.amount == obj.amount) & (self.sides == obj.sides) else False

@@ -84,9 +84,18 @@ class Character:
 		msg = ''
 		attack_throw = self.dies['d1k20'].roll()
 		if attack_throw + self.attack > enemy.defence:
-			msg+=("""{0}: Attack throw {1} - hit!\n""".\
+			if attack_throw >= 18:
+				msg+=("""{0}: Attack throw {1} - critical hit!\n""".\
 				format(self.name, attack_throw))
-			damage = self.equipment.weapon.die.roll()
+				primary_die = self.equipment.weapon.die
+				self.equipment.weapon.die = Die(primary_die.amount*2, primary_die.sides)
+				damage = self.equipment.weapon.die.roll()
+				#restore state
+				self.equipment.weapon.die = Die(primary_die.amount, primary_die.sides)
+			else:
+				msg+=("""{0}: Attack throw {1} - hit!\n""".\
+					format(self.name, attack_throw))
+				damage = self.equipment.weapon.die.roll()
 
 			enemy.set_hp(-damage)
 			if damage > 0:

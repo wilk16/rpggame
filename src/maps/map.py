@@ -1,3 +1,6 @@
+"""Map implements classes for levels and Tiles of which levels are made
+The hero travels down next levels and on each of them explores different Tiles"""
+
 from itertools import product
 from ..characters.monster import MONSTER_COLLECTION
 from random import choice, randint
@@ -16,16 +19,19 @@ class Level:
 		self.boss_beaten = False
 
 	def generate_random_level(self):
+		""""Generates level with randomly placed MonsterTiles, HealthTiles, etc."""
 		
+		# Dictionary with specific tiles amount per level
 		tile_dict = {'monster': (MonsterTile, 5),
 					'healing': (HealthTile, 2),
 					'boss': (BossTile, 1),
 					'mana': (ManaTile, 1),}
 					
-		self.tiles[2][2] = SpawnTile()
-		
+
 		empty_tiles = [(x, y) for x in range(0, self.dim) for y in range(0, self.dim) if (x, y)!=(2, 2)]
 		
+		# SpawnTile should always be in the middle
+		self.tiles[int(self.dim/2)][int(self.dim/2)] = SpawnTile()
 		
 		for key in tile_dict:
 			for i in range(0, tile_dict[key][1]):
@@ -58,10 +64,14 @@ class Level:
 		print(level_diag)
 		
 	def visit_tile(self, x, y):
+		""" Actions when hero steps on a tile. Make tile visited, surrounding 
+		visible and perform tiles action """
 		
 		# perform action connected to tile
 		if self.tiles[x][y].visited == 0:
 			self.tiles[x][y].action(hero = self.hero, enemy = self.tiles[x][y].enemy)
+			
+		# if this is a BossTile & and hero killed the boss then go level deeper
 		if isinstance(self.tiles[x][y], BossTile) & self.hero.isAlive():
 			_=clear_display()
 			print(msg_log.display_log())
@@ -83,14 +93,16 @@ class Level:
 		
 		
 	def enter_hero(self, hero):
+		"""Prepare level for hero entrance"""
 		self.hero = hero
+		self.max_depth_reached = self.depth
 		middle = int(self.dim/2)
 		self.hero.xy = [middle, middle]
 		self.visit_tile(self.hero.xy[0], self.hero.xy[1])
 		self.tiles[self.hero.xy[0]][self.hero.xy[1]].symbol = 'H'
 		
 	def move_hero(self, hero):
-		
+		"""Main loop while exploring a level, moves hero around"""
 		while self.boss_beaten == False:
 			_=clear_display()
 			print(msg_log.display_log())
@@ -160,7 +172,6 @@ class MonsterTile(Tile):
 		self.action = MonsterTile.battle
 		
 	def battle(**kwargs):
-		msg_log.insert('You encounter a '+kwargs['enemy'].name)
 		Hero.battle(kwargs['hero'], kwargs['enemy'])
 		
 class BossTile(MonsterTile):
@@ -171,7 +182,6 @@ class BossTile(MonsterTile):
 		self.action = BossTile.battle
 		
 	def battle(**kwargs):
-		msg_log.insert('You encounter a '+kwargs['enemy'].name)
 		Hero.battle(kwargs['hero'], kwargs['enemy'])
 		if kwargs['hero'].isAlive():
 			msg_log.insert("You've beaten the boss of this level.\nBehind him you see another stairs leading down...")
@@ -182,23 +192,26 @@ class RestorationTile(Tile):
 	
 	
 class ManaTile(RestorationTile):
+	"""Special tile that replenishes mana"""
 	def __init__(self, **kwargs):
 		super().__init__()
 		self.symbol = 'm'
 		self.action = ManaTile.restore_mana
 		
 	def restore_mana(**kwargs):
+		"""Restores heroe's full mana"""
 		msg_log.insert(kwargs['hero'].name +"'s full mana was restored.")
 		kwargs['hero'].mana = kwargs['hero'].max_mana
 	
 class HealthTile(RestorationTile):
-	
+	"""Special tile that replenishes health"""
 	def __init__(self, **kwargs):
 		super().__init__()
 		self.symbol = '+'
 		self.action = HealthTile.restore_health
 		
 	def restore_health(**kwargs):
+		"""Restores heroe's full health"""
 		msg_log.insert(kwargs['hero'].name +"'s full health was restored.")
 		kwargs['hero'].hp = kwargs['hero'].max_hp
 	
