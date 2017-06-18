@@ -50,7 +50,18 @@ class Vampire(Undead):
 	
 class Ghul(Undead):
 	"""Quasimodo, but dead. Undead"""
-	pass
+		super().__init__()
+		self.name = 'Ghoul'
+		self.max_hp = 10
+		self.hp = 10
+		self.attack = 1
+		self.defence = 3
+		self.speed = 1
+		self.exp = 700
+		self.level = 3
+		self.inventory = []
+		self.equipment = Equipment(weapon = Fist())
+
 	
 class Zombie(Undead):
 	""" Braaaain guys"""
@@ -114,6 +125,6 @@ class Skeleton(Undead):
 	
 MONSTER_COLLECTION = {1: [Skeleton,],
 	2:[Zombie,],
-	3:[DragonHatchling,],
+	3:[DragonHatchling, Ghoul],
 	4:[],
 	5:[SkeletalDragon,]}
