@@ -112,7 +112,7 @@ class Skeleton(Undead):
 		self.inventory = []
 		self.equipment = Equipment(weapon = ShortSword())
 	
-MONSTER_COLLECTION = {1: [Skeleton,],
-	2:[Zombie,],
-	3:[DragonHatchling,],
-	4:[SkeletalDragon,]}
+MONSTER_COLLECTION = {1: [Skeleton, ],
+					  2: [Zombie, ],
+					  3: [DragonHatchling, ],
+					  4: [SkeletalDragon, ]}

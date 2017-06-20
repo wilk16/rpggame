@@ -1,14 +1,14 @@
 from .weapon import *
 from .shield import WoodenShield
-from .armor import LeatherArmor
 
-from ..misc.misc import printLine
-from ..misc.const import ROW_LEN
 
-class Equipment():
-	"""Base class for storing currently equiped stuff"""
-	def __init__(self, weapon = Fist(), elixir = []):
+class Equipment:
+	"""Base class for storing currently equipped stuff"""
+	def __init__(self, weapon=Fist(), elixir=[]):
 		self.weapon = weapon
-		self.shield = WoodenShield
-		self.armor = LeatherArmor
+		self.shield = WoodenShield()
 		self.elixir = elixir
+
+	def serialize(self):
+		return {'class': self.__class__, 'weapon': self.weapon.serialize(), 'shield': self.shield.serialize(),
+				'elixir': [elixir.serialize() for elixir in self.elixir]}
