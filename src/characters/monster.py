@@ -1,5 +1,5 @@
 from .character import Character
-from ..items.weapon import Fist, DragonClaw, ShortSword
+from ..items.weapon import *
 from ..items.equipment import Equipment
 
 
@@ -73,7 +73,7 @@ class Zombie(Undead):
 		self.attack = 1
 		self.defence = 3
 		self.speed = 1
-		self.exp = 300
+		self.exp = 500
 		self.level = 2
 		self.inventory = []
 		self.equipment = Equipment(weapon = Fist())
@@ -98,8 +98,8 @@ class SkeletalDragon(Dragon, Undead):
 	def __init__(self):
 		super().__init__()
 		self.name = 'Skeletal dragon'
-		self.max_hp = 20
-		self.hp = 20
+		self.max_hp = 40
+		self.hp = 40
 		self.attack = 7
 		self.defence = 5
 		self.speed = 6
@@ -118,13 +118,12 @@ class Skeleton(Undead):
 		self.attack = 3
 		self.defence = 2 # attack + 1k20 >= defence
 		self.speed = 3
-		self.exp = 100
+		self.exp = 300
 		self.level = 1
 		self.inventory = []
 		self.equipment = Equipment(weapon = ShortSword())
-	
-MONSTER_COLLECTION = {1: [Skeleton,],
-	2:[Zombie,],
-	3:[DragonHatchling, Ghoul],
-	4:[],
-	5:[SkeletalDragon,]}
+
+MONSTER_COLLECTION = {1: [Skeleton, ],
+					  2: [Zombie, ],
+					  3: [DragonHatchling, ],
+					  4: [SkeletalDragon, ]}

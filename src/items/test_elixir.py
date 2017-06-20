@@ -2,6 +2,7 @@ import unittest
 from .elixir import Elixir, HealingPotion, ManaPotion
 from ..characters.hero import Hero
 
+
 class TestElixirClass(unittest.TestCase):
 	"""Tests for Elixir class"""
 	def setUp(self):
@@ -25,7 +26,8 @@ class TestElixirClass(unittest.TestCase):
 		msg = self.e.drink(self.h)
 		self.assertEqual(msg, self.h.name + ' has no '+self.e.name+"s left")
 		self.assertEqual(self.e.amount, 0)
-		
+
+
 class TestHealingPotionClass(unittest.TestCase):
 	"""Tests for HealingPotion class"""
 	
@@ -96,11 +98,11 @@ class TestManaPotionClass(unittest.TestCase):
 		self.assertEqual(self.e1.name, 'Mana potion')
 		self.assertEqual(self.e0.amount, 0)
 		
-	def test_drink_method_hero_fullmana(self):
+	def test_drink_method_hero_full_mana(self):
 		"""Hero with full hp should not be able to use this elixir"""
 		self.h.mana = self.h.max_mana
 		msg = self.e1.drink(self.h)
-		self.assertEqual(msg, self.h.name  + ' has full mana!')
+		self.assertEqual(msg, self.h.name + ' has full mana!')
 		self.assertEqual(self.e1.amount, 1)
 		
 	def test_drink_method_hero_lightly_loss(self):
@@ -123,18 +125,11 @@ class TestManaPotionClass(unittest.TestCase):
 		
 	def test_drink_method_with_no_elixirs(self):
 		"""Drink method should only display error message and not use the item"""
-		self.h.mana = self.h.max_mana -1
+		self.h.mana = self.h.max_mana - 1
 		self.e0.amount = 0
 		msg = self.e0.drink(self.h)
 		self.assertEqual(msg, self.h.name + ' has no '+self.e0.name+"s left")
 		self.assertEqual(self.e0.amount, 0)
-		
-		
-	
-		
-	
-		
-	
 	
 if __name__ == '__main__':
 	unittest.main()

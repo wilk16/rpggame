@@ -1,11 +1,18 @@
 from .item import Item
-from ..dies.die import Die
-		
+
+
 class Shield(Item):
 	"""Base class for shields"""
 	def __init__(self):
 		super().__init__()
-		self.item_type = 'shield'
+		self.defence = 0
+
+	def serialize(self):
+		data_out = super().serialize()
+		# data_out['class'] = self.__class__
+		data_out['defence'] = self.defence
+		return data_out
+
 
 class WoodenShield(Shield):
 	"""Simple round, wooden shield"""
